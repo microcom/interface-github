@@ -21,8 +21,8 @@ class GithubOwner(models.Model):
         required=True,
     )
 
-    organisation_id = fields.Many2one(
-        comodel_name="github.organisation", string="Organisation"
+    organization_id = fields.Many2one(
+        comodel_name="github.organization", string="Organization"
     )
 
     github_user_id = fields.Many2one(comodel_name="res.partner", string="User")
@@ -37,22 +37,46 @@ class GithubOwner(models.Model):
         )
         return res
 
-    @api.constrains("type", "organisation_id", "user_id")
+    @api.model
+    def get_odoo_data_from_github(self, gh_data):
+        res = super().get_odoo_data_from_github(gh_data)
+        res.update(
+            type=(res.get("type") or "").lower()
+        )  # lowering type value to match selection value
+        # set organization_id if the owner type is Organization
+        # else set github_user_id if the type is User
+        if gh_data.type == "Organization":
+            # Fetch the organization owner
+            org_id = self.env.context.get("github_organization_id", None)
+            if not org_id:
+                organization_obj = self.env["github.organization"]
+                organization = organization_obj.get_from_id_or_create(gh_data=gh_data)
+                org_id = organization.id
+            res.update(organization_id=org_id)
+        elif gh_data.type == "User":
+            # Fetch the user owner
+            partner_obj = self.env["res.partner"]
+            github_user_partner = partner_obj.get_from_id_or_create(gh_data=gh_data)
+            res.update(github_user_id=github_user_partner.id)
+        return res
+
+    @api.constrains("type", "organization_id", "github_user_id")
     def _check_type_organisation(self):
         owner_type_field_map = {
             "user": "user_id",
-            "organisation": "organisation_id",
+            "organization": "organization_id",
         }
         for owner in self.filtered(
-            lambda o: not o.organisation_id or not o.github_user_id
+            lambda o: not o.organization_id or not o.github_user_id
         ):
-            raise ValidationError(
-                _(
-                    "field %(fname)s is required for owner of type %(owner_type)s",
-                    **dict(
-                        fname=self._fields[owner_type_field_map[owner.type]].string
-                        or owner_type_field_map[owner.type],
-                        owner_type=owner.type,
+            fieldname = owner_type_field_map[owner.type]
+            if not owner[fieldname]:
+                raise ValidationError(
+                    _(
+                        "Field %(fname)s is required for owner of type %(owner_type)s",
+                        **dict(
+                            fname=self._fields[fieldname].string or fieldname,
+                            owner_type=owner.type,
+                        )
                     )
                 )
-            )
