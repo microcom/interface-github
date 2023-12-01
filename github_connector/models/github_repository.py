@@ -5,7 +5,8 @@
 
 import logging
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -22,9 +23,17 @@ class GithubRepository(models.Model):
     organization_id = fields.Many2one(
         comodel_name="github.organization",
         string="Organization",
-        required=True,
         index=True,
         readonly=True,
+        related="owner_id.organization_id",
+        store=True,
+    )
+
+    owner_id = fields.Many2one(
+        comodel_name="github.owner",
+        string="Owner",
+        required=True,
+        index=True,
         ondelete="cascade",
     )
 
@@ -105,12 +114,12 @@ class GithubRepository(models.Model):
         for item in self:
             item.team_qty = mapping.get(item.id, 0)
 
-    @api.depends("name", "organization_id.github_name")
+    @api.depends("name", "owner_id.github_name")
     def _compute_complete_name(self):
         for repository in self:
             repository.complete_name = "%(login)s/%(rep_name)s" % (
                 {
-                    "login": repository.organization_id.github_name,
+                    "login": repository.owner_id.github_name,
                     "rep_name": repository.name or "",
                 }
             )
@@ -142,13 +151,8 @@ class GithubRepository(models.Model):
     @api.model
     def get_odoo_data_from_github(self, gh_data):
         res = super().get_odoo_data_from_github(gh_data)
-        org_id = self.env.context.get("github_organization_id", None)
-        if not org_id:
-            # Fetch current organization object
-            organization_obj = self.env["github.organization"]
-            organization = organization_obj.get_from_id_or_create(gh_data=gh_data.owner)
-            org_id = organization.id
-        res.update({"organization_id": org_id})
+        owner = self.env["github.owner"].get_from_id_or_create(gh_data=gh_data.owner)
+        res.update(owner_id=owner.id)
         return res
 
     def find_related_github_object(self, obj_id=None):
@@ -159,7 +163,18 @@ class GithubRepository(models.Model):
     def get_github_base_obj_for_creation(self):
         self.ensure_one()
         gh_api = self.get_github_connector()
-        return gh_api.get_organization(self.organization_id.github_name)
+        if self.owner_id.type == "organization":
+            return gh_api.get_organization(self.organization_id.github_name)
+        elif self.owner_id.type == "user":
+            return gh_api.get_user(self.organization_id.github_name)
+        else:
+            raise ValidationError(
+                _(
+                    "Could not determine github base object for creation "
+                    "for owner with type %(owner_type)",
+                    owner_type=self.owner_id.type,
+                )
+            )
 
     def _get_analysis_rules(self):
         if self.inhibit_inherited_rules:
