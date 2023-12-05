@@ -12,4 +12,3 @@ from . import github_repository_branch
 from . import github_team
 from . import github_team_partner
 from . import github_team_repository
-from . import github_owner
