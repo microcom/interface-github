@@ -283,8 +283,8 @@ class AbstractGithubModel(models.AbstractModel):
             # process, we realize a write only if data changed
             to_write = {}
             for k, v in data.items():
-                if hasattr(item[k], "id"):
-                    to_compare = item[k].id
+                if hasattr(item[k], "ids"):
+                    to_compare = item[k].ids
                 else:
                     to_compare = item[k]
                 # do not overwrite existing values for some given fields
