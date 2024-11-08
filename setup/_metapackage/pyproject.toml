@@ -1,0 +1,11 @@
+[project]
+name = "odoo-addons-oca-interface-github"
+version = "17.0.20241108.0"
+dependencies = [
+    "odoo-addon-github_connector>=17.0dev,<17.1dev",
+]
+classifiers=[
+    "Programming Language :: Python",
+    "Framework :: Odoo",
+    "Framework :: Odoo :: 17.0",
+]
