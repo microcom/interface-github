@@ -34,9 +34,9 @@ Connector' Module if your repositories contain Odoo Modules.
 It extends 'Analysis' features to parse code files (readme / manifest
 files) and add new models and menus.
 
-|image|
+|menu|
 
-.. |image| image:: https://raw.githubusercontent.com/github_connector_odoo/static/description/menu.png
+.. |menu| image:: https://raw.githubusercontent.com/OCA/interface-github/17.0/github_connector_odoo/static/description/menu.png
 
 **Table of contents**
 
@@ -53,30 +53,30 @@ Configuration
 2. The URL of the file that contains IDs of your repositories for the
    runbot
 
-|image|
+|github_organization_form|
 
 If you had analyzed previously your repositories with the 'github
 Connector' module, you should launch again the Analysis Process for all
 your Repository Branches.
 
-.. |image| image:: https://raw.githubusercontent.com/OCA/interface-github/17.0/github_connector_odoo/static/description/github_organization_form.png
+.. |github_organization_form| image:: https://raw.githubusercontent.com/OCA/interface-github/17.0/github_connector_odoo/static/description/github_organization_form.png
 
 Usage
 =====
 
 **Odoo Modules**
 
-|image|
+|odoo_module_kanban|
 
 In each module, you can see the description of the module, the authors,
 the available series, and the list of the modules that depend on the
 current module.
 
-|image1|
+|odoo_module_form|
 
 **Odoo Authors**
 
-|image2|
+|odoo_author|
 
 This list is based on the 'author' key of the manifest file.
 
@@ -84,21 +84,21 @@ This list is based on the 'author' key of the manifest file.
 
 This list is based on the 'license' key of the manifest file.
 
-|image3|
+|odoo_license|
 
 **Odoo Bin Libs**
 
 This list is based on the 'external_dependencies' / 'bin' key of the
 manifest file.
 
-|image4|
+|odoo_bin_libs|
 
 **Odoo Python Libs**
 
 This list is based on the 'external_dependencies' / 'python' key of the
 manifest file.
 
-|image5|
+|odoo_python_libs|
 
 **Analysis source code**
 
@@ -121,15 +121,15 @@ This module provide a new reporting.
 
 **Modules by Serie (and Licenses)**
 
-|image6|
+|reporting_module_by_serie|
 
-.. |image| image:: https://raw.githubusercontent.com/github_connector_odoo/static/description/odoo_module_kanban.png
-.. |image1| image:: https://raw.githubusercontent.com/github_connector_odoo/static/description/odoo_module_form.png
-.. |image2| image:: https://raw.githubusercontent.com/github_connector_odoo/static/description/odoo_author.png
-.. |image3| image:: https://raw.githubusercontent.com/github_connector_odoo/static/description/odoo_license.png
-.. |image4| image:: https://raw.githubusercontent.com/github_connector_odoo/static/description/odoo_bin_libs.png
-.. |image5| image:: https://raw.githubusercontent.com/github_connector_odoo/static/description/odoo_python_libs.png
-.. |image6| image:: https://raw.githubusercontent.com/github_connector_odoo/static/description/reporting_module_by_serie.png
+.. |odoo_module_kanban| image:: https://raw.githubusercontent.com/OCA/interface-github/17.0/github_connector_odoo/static/description/odoo_module_kanban.png
+.. |odoo_module_form| image:: https://raw.githubusercontent.com/OCA/interface-github/17.0/github_connector_odoo/static/description/odoo_module_form.png
+.. |odoo_author| image:: https://raw.githubusercontent.com/OCA/interface-github/17.0/github_connector_odoo/static/description/odoo_author.png
+.. |odoo_license| image:: https://raw.githubusercontent.com/OCA/interface-github/17.0/github_connector_odoo/static/description/odoo_license.png
+.. |odoo_bin_libs| image:: https://raw.githubusercontent.com/OCA/interface-github/17.0/github_connector_odoo/static/description/odoo_bin_libs.png
+.. |odoo_python_libs| image:: https://raw.githubusercontent.com/OCA/interface-github/17.0/github_connector_odoo/static/description/odoo_python_libs.png
+.. |reporting_module_by_serie| image:: https://raw.githubusercontent.com/OCA/interface-github/17.0/github_connector_odoo/static/description/reporting_module_by_serie.png
 
 Known issues / Roadmap
 ======================
