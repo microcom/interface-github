@@ -60,12 +60,12 @@ class TestGithubConnectorAnalysisRuleBase(TestGithubConnectorCommon):
                     "github_connector",
                     "tests",
                     "res",
-                    "github_repo_%s_response.json" % github_id,
+                    f"github_repo_{github_id}_response.json",
                 )
             ) as jsonfile:
                 responses.add(
                     responses.GET,
-                    "https://api.github.com:443/repositories/%s" % github_id,
+                    f"https://api.github.com:443/repositories/{github_id}",
                     json=json.loads(jsonfile.read()),
                     status=200,
                 )

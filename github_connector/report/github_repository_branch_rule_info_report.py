@@ -39,7 +39,7 @@ class GithubRepositoryBranchRuleInfoReport(models.Model):
     def _query(self, with_clause="", fields=None, groupby="", from_clause=""):
         if fields is None:
             fields = {}
-        with_ = ("WITH %s" % with_clause) if with_clause else ""
+        with_ = f"WITH {with_clause}" if with_clause else ""
 
         select_ = """
             min(grbri.id) as id,
@@ -55,31 +55,28 @@ class GithubRepositoryBranchRuleInfoReport(models.Model):
             sum(grbri.total_count) as total_count,
             sum(grbri.scanned_files) as scanned_files
         """
-
-        from_ = (
-            """
-                github_repository_branch_rule_info as grbri
-                left join github_analysis_rule as gar on grbri.analysis_rule_id = gar.id
-                left join github_analysis_rule_group as garg on gar.group_id = garg.id
-                left join github_repository_branch as grb
-                on grbri.repository_branch_id = grb.id
-                left join github_organization_serie as gos
-                on grb.organization_serie_id = gos.id
-                left join github_repository as gr on grb.repository_id = gr.id
-                %s
+        from_ = f"""
+            github_repository_branch_rule_info as grbri
+            left join github_analysis_rule as gar on grbri.analysis_rule_id = gar.id
+            left join github_analysis_rule_group as garg on gar.group_id = garg.id
+            left join github_repository_branch as grb
+            on grbri.repository_branch_id = grb.id
+            left join github_organization_serie as gos
+            on grb.organization_serie_id = gos.id
+            left join github_repository as gr on grb.repository_id = gr.id
+            {from_clause}
         """
-            % from_clause
-        )
-
-        groupby_ = """
+        groupby_ = f"""
             gar.id,
             garg.id,
             grb.id,
             gr.id,
-            gos.id %s
-        """ % (groupby)
-
-        return f"{with_} (SELECT {select_} FROM {from_} WHERE grbri.id > 0 GROUP BY {groupby_})"
+            gos.id {groupby}
+        """
+        return (
+            f"{with_} (SELECT {select_} FROM {from_} WHERE grbri.id > 0 "
+            f"GROUP BY {groupby_})"
+        )
 
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)

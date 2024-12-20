@@ -166,7 +166,7 @@ class GithubRepository(models.Model):
             repository = branch.repository_id
             gh_repo = repository.find_related_github_object()
             if not os.path.exists(branch.local_path):
-                _logger.info("Cloning new repository into %s ..." % branch.local_path)
+                _logger.info(f"Cloning new repository into {branch.local_path} ...")
                 # Cloning the repository
                 try:
                     os.makedirs(branch.local_path)
@@ -178,10 +178,9 @@ class GithubRepository(models.Model):
                         )
                         % (branch.local_path)
                     ) from None
-                command = ("git clone %s -b %s %s") % (
-                    gh_repo.clone_url,
-                    branch.name,
-                    branch.local_path,
+                command = (
+                    f"git clone {gh_repo.clone_url} -b {branch.name} "
+                    f"{branch.local_path}"
                 )
                 os.system(command)
                 branch.write(
@@ -189,7 +188,7 @@ class GithubRepository(models.Model):
                 )
             else:
                 # Update repository
-                _logger.info("Pulling existing repository %s ..." % branch.local_path)
+                _logger.info(f"Pulling existing repository {branch.local_path} ...")
                 try:
                     res = check_output(
                         ["git", "pull", "origin", branch.name], cwd=branch.local_path

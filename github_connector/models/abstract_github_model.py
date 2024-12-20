@@ -210,7 +210,8 @@ class AbstractGithubModel(models.AbstractModel):
             else:
                 try:
                     # Try to get an organization 1st.
-                    # An organization is always an user, but a user is not necessarily an org.
+                    # An organization is always an user,
+                    # but a user is not necessarily an org.
                     gh_obj = gh_api.get_organization(p_name)
                 except UnknownObjectException:
                     # Try to get an user.
@@ -264,7 +265,7 @@ class AbstractGithubModel(models.AbstractModel):
                 stream = urlopen(url, timeout=10).read()
                 break
             except Exception as err:
-                _logger.warning("URL Call Error. %s" % (err.__str__()))
+                _logger.warning(f"URL Call Error. {err}")
         else:
             raise UserError(_("Maximum attempts reached."))
         return base64.standard_b64encode(stream)

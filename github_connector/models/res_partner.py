@@ -93,7 +93,7 @@ class ResPartner(models.Model):
     @api.model
     def get_odoo_data_from_github(self, gh_data):
         res = super().get_odoo_data_from_github(gh_data)
-        res.update({"name": gh_data.name or "%s (Github)" % gh_data.login})
+        res.update({"name": gh_data.name or f"{gh_data.login} (Github)"})
         if hasattr(gh_data, "avatar_url"):
             res.update(
                 {"image_1920": self.get_base64_image_from_github(gh_data.avatar_url)}
